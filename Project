@@ -1,0 +1,105 @@
+# Retrieve the webpage content
+HTML=$(curl -s https://www.boursorama.com/cours/1zTL0/)
+
+# Extract the stock price from the webpage content
+PRICE=$(echo "$HTML" | grep -oP 'c-faceplate__price js-quote-time[\s\S]*?<span>[\s\S]*?<\/span>\K[^<]+')
+
+# Print the stock price
+echo "$PRICE"
+
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+from dash.dependencies import Input, Output
+import subprocess
+
+# Define the app
+app = dash.Dash(__name__)
+
+# Define the layout
+app.layout = html.Div([
+    html.H1('Stock Price'),
+    html.Div(id='price-container'),
+    dcc.Interval(id='interval', interval=60000),
+])
+
+# Define the callbacks
+@app.callback(Output('price-container', 'children'),
+              Input('interval', 'n_intervals'))
+def update_price(n):
+    # Retrieve the stock price from the Bash script
+    result = subprocess.check_output(['./get_stock_price.sh']).decode().strip()
+    # Create a text element with the stock price
+    return html.P(f'Current price: {result} EUR')
+
+# Run the app
+if __name__ == '__main__':
+    app.run_server(debug=True)
+    
+    
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+from dash.dependencies import Input, Output
+import pandas as pd
+import plotly.graph_objs as go
+import subprocess
+from datetime import datetime, time, timedelta
+import os
+
+# Define the app
+app = dash.Dash(__name__)
+
+# Define the layout
+app.layout = html.Div([
+    html.H1('Stock Price'),
+    html.Div(id='price-container'),
+    dcc.Graph(id='price-graph', figure={}),
+    dcc.Interval(id='interval', interval=300000),
+    html.Div(id='daily-report', children=[]),
+])
+
+# Define the callbacks
+@app.callback(Output('price-container', 'children'),
+              Output('price-graph', 'figure'),
+              Output('daily-report', 'children'),
+              Input('interval', 'n_intervals'))
+def update_dashboard(n):
+    # Retrieve the stock price from the Bash script
+    result = float(subprocess.check_output(['./get_stock_price.sh']).decode().strip())
+    
+    # Update the CSV file with the new price and timestamp
+    now = datetime.now()
+    timestamp = now.strftime('%Y-%m-%d %H:%M:%S')
+    with open('stock_price.csv', 'a') as f:
+        f.write(f'{timestamp},{result}\n')
+    
+    # Load the CSV file into a Pandas dataframe
+    df = pd.read_csv('stock_price.csv', names=['timestamp', 'price'])
+    df['timestamp'] = pd.to_datetime(df['timestamp'])
+    
+    # Create the time series graph
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=df['timestamp'], y=df['price'], mode='lines'))
+    fig.update_layout(title='Stock Price', xaxis_title='Timestamp', yaxis_title='Price (EUR)')
+    
+     # Create a text element with the stock price
+    price_element = html.P(f'Current price: {result:.2f} EUR')
+    
+    # Create the daily report
+    if now.time() == time(20, 0, 0):
+        today = now.strftime('%Y-%m-%d')
+        df_today = df[df['timestamp'].dt.date == pd.to_datetime(today).date()]
+        if not df_today.empty:
+            open_price = df_today.iloc[0]['price']
+            close_price = df_today.iloc[-1]['price']
+            daily_volatility = df_today['price'].pct_change().std() * 100
+            daily_evolution = (close_price - open_price) / open_price * 100
+            report_element = html.Div([
+                html.H2('Daily Report'),
+                html.P(f'Open price: {open_price:.2f} EUR'),
+                html.P(f'Close price: {close_price:.2f} EUR'),
+                html.P(f'Volatility: {daily_volatility:.2f}%'),
+                html.P(f'Evolution: {daily_evolution:.2f}%'),
+            ])
+
