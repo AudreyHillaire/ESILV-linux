@@ -1,0 +1,201 @@
+#Exercice 1:
+
+cd /
+ls
+pwd
+mkdir test
+cd /home
+cd ~
+cd ..
+cd ..
+cd
+mkdir test
+cd test
+pwd 
+
+
+
+#Exercice 2:
+
+cd ~
+pwd
+mkdir linux_ex_1
+cd linux_ex_1
+touch first_name_last_name.txt 
+mkdir notes
+mv first_name_last_name.txt notes/
+YEAR=$(date +%Y) && mv notes/first_name_last_name.txt notes/first_name_last_name_${YEAR}.txt
+cp -r notes notes_2022
+rm -rv notes 
+
+
+#Exercice 3:
+
+cd ~/linux_ex_1
+nano script_1.sh
+echo "Script running please wait ..."
+echo "Done."
+cat script_1.sh 
+chmod +x script_1.sh 
+./script_1.sh 
+
+
+#Exercice 4.1:
+
+#1.
+(a) cd ~/linux_ex_1
+nano credentials
+
+(b) cat credentials 
+(c) ls -l credentials
+
+#2.
+(a) chmod a-w credentials 
+
+(b) nano credentials 
+Modify the contents of the file as needed.
+Press CTRL+X, then Y, then ENTER to save and exit the text editor.
+
+(c) cat credentials 
+
+#3.
+(a) chmod a+rw credentials 
+
+(b) nano credentials 
+Modify the contents of the file as needed.
+Press CTRL+X, then Y, then ENTER to save and exit the text editor.
+
+(c) cat credentials 
+
+#1.
+(a) chmod u+x credentials 
+
+(b) ls -l credentials 
+
+#2.
+(a) chmod o-r credentials (remove read permission for other users)
+
+(b) ls -l credentials (display the current permissions of the file)
+
+#3.
+(a) chmod a+rwx credentials 
+
+(b) ls -l credentials 
+
+
+
+
+#Exercice 4.2:
+
+#1.
+cd /
+
+#2.
+sudo nano .private_file
+(a) Write some information in the file. Press CTRL+X, then Y, then ENTER to save and exit the text editor.
+
+(b) cat .private_file 
+
+(c) ls -la 
+
+
+#3.
+nano .private_file
+(a) Write some new information in the file. Press CTRL+X, then Y, then ENTER to save and exit the text editor.
+(b) cat .private_file (display the content of the file in the terminal)
+
+(b) cat .private_file 
+
+#4.
+sudo nano .private_file
+(a) Write some new information in the file. Press CTRL+X, then Y, then ENTER to save and exit the text editor.
+
+(b) cat .private_file 
+
+#5.
+chmod a+rwx .private_file
+(a) nano .private_file
+Modify the contents of the file as needed.
+Press CTRL+X, then Y, then ENTER to save and exit the text editor.
+
+(b) cat .private_file 
+
+
+
+
+#Exercice 4.3:
+
+chmod a+rw .private_file
+
+sudo chown $USER:$USER .private_file (set the owner and group of the file to the current user)
+
+chmod a+rw .private_file
+
+
+
+
+#Exercice 4.4:
+
+sudo apt update
+
+sudo apt upgrade
+
+sudo apt install cmatrix
+
+cmatrix
+
+Press CTRL+C to quit cmatrix.
+
+sudo apt install tmux
+
+tmux
+
+Type echo "Hello session 0" and press ENTER.
+
+Type cmatrix and press ENTER.
+
+Press CTRL+b, then d to detach from the current tmux session.
+
+tmux new-session -s session1
+
+Type echo "Hello session 1" and press ENTER.
+
+Press CTRL+b, then d to detach from the current tmux session.
+
+tmux ls
+
+tmux attach-session -t session0
+
+Press CTRL+b, then d to detach from the current tmux session.
+
+tmux attach-session -t session1
+
+Press CTRL+b, then d to detach from the current tmux session.
+
+tmux ls
+
+tmux kill-server
+
+tmux ls 
+
+
+
+
+
+#Exercice 4.5:
+
+cmatrix --help
+
+cmatrix -C
+
+cmatrix -s 10
+
+Press CTRL+C to stop cmatrix.
+
+cmatrix -s 20 -C blue
+
+man cmatrix
+
+tmux --help
+
+man tmux
